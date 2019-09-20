@@ -1,25 +1,6 @@
 //Evento de despliegue de la modal del rango de fechas; el evento se activa una vez seleccionado
 //la opción "Otro" en el select de fechas
-/*function DespliegueModal(){
-	setTimeout(function(){
-		if(document.getElementById('rangoFechas').value == 3){
-			var btnModal = document.getElementById('btnDespliegueRangoFechas');
-			btnModal.click()
-		}
-	},1500);
-   /* var btnModal = document.getElementById('btnDespliegueRangoFechas');
-        btnModal.click();*/
-   // alert('fdjhlkj');
-//}
-
-/*setTimeout(
-	function(){
-	 /* if(document.getElementById('rangoFechas').value == 3){
-	    var btnModal = document.getElementById('btnDespliegueRangoFechas');
-            btnModal.click();
-	  }*/
-/*	  alert('fkld');
-	},1500);*/
+/**/
 
 document.getElementById('rangoFechas').addEventListener('change', function(){
 	var select = document.getElementById('rangoFechas');
@@ -27,12 +8,7 @@ document.getElementById('rangoFechas').addEventListener('change', function(){
 	if(value == 3){
 		var btnModal = document.getElementById('btnDespliegueRangoFechas');
 		btnModal.click();
-		/*alert('fjkgfkj');*/
 	}
-	/*if(document.getElementById('rangoFechas').value == 3){
-		DespliegueModal();
-	}*/
-	//alert('jkshkgjhf');
 })
 
 //Evento listener para la validación del rango de fechas
@@ -47,7 +23,7 @@ document.getElementById('RangoFechasFiltroSuccess').addEventListener('click', fu
         }
         document.getElementById('contentRangoFechasModal').innerHTML += 
         `<p style="color:red; font-size:1rem; font-weight:bold;" id="alertErrorRangoFechas">Se debe de especificar el rango de fechas.</p>`;
-    }else if(fechaFin.value < fechaInicio.value){
+    }else if(Date.parse(fechaFin.value) < fechaInicio.value){
         if(document.getElementById('alertErrorRangoFechas')){
             document.getElementById('contentRangoFechasModal').removeChild(document.getElementById('alertErrorRangoFechas'));
         }
@@ -66,15 +42,22 @@ document.getElementById('closeModalRangoFechas').addEventListener('click', funct
 })
 
 document.getElementById('filtrarPedidos').addEventListener('click', function(){
-    
+
     var selectFecha, selectCliente, tipoPresentacion;
     var valorFecha;
     var valorFecha1 = 0;
     var valorFecha2 = 0;
+    var FechaHoy = 0;
+
+    var FechaAyer = 0;
 
     selectFecha = document.getElementById('rangoFechas').value;
     selectCliente = document.getElementById('codCliente');
     tipoPresentacion = document.getElementById('tipoPresentacion').value;
+
+        if(selectFecha == 0 && selectCliente.value.length == 0 && tipoPresentacion == 1){
+                location.reload();
+        }
 
     var fecha = new Date();
                 dia = fecha.getDate();
@@ -83,82 +66,51 @@ document.getElementById('filtrarPedidos').addEventListener('click', function(){
 
     if(selectFecha != 0){
         if(selectFecha == 1){
-            valorFecha1 = year+"-"+mes+"-"+(dia-1);
-            valorFecha2 = year+"-"+mes+"-"+(dia+1);
+            valorFecha = 1;
+            FechaHoy = year+"-"+mes+"-"+dia;
         }else if(selectFecha == 2){
-            valorFecha1 = year+"-"+mes+"-"+(dia-1);
-            valorFecha2 = year+"-"+mes+"-"+dia;
+            valorFecha = 2;
+            FechaAyer = year+"-"+mes+"-"+dia;
         }else if(selectFecha == 3){
+            valorFecha = 3;
             valorFecha1 = document.getElementById('fechaInicio').value;
             valorFecha2 = document.getElementById('fechaFin').value;
         }
     }
 
-    if(selectCliente.value.length > 0){
-        var data = document.querySelector('#dataCliente2 > option[value="'+selectCliente.value+'"]');
+  if(selectCliente.value.length > 0){
+        var data = document.querySelector('#dataClientesHistorial2 > option[value="'+selectCliente.value+'"]');
         selectCliente.value = data.innerHTML;
     }
+    var objeto = {
+        codCliente: selectCliente.value,
+        tipoPresentacion: tipoPresentacion,
+        valorFecha: valorFecha,
+        FechaHoy: FechaHoy,
+        FechaAyer: FechaAyer,
+        fechaInicioH: valorFecha1,
+        fechaFin: valorFecha2
+    };
 
-    if(selectCliente.value.length > 0 && tipoPresentacion == 1){
+    if(objeto.codCliente.length <= 0){
+        delete objeto.codCliente;
+    }
 
-        if(valorFecha1 != 0 && valorFecha2 != 0){
-            var objeto = {
-                cliente: selectCliente.value,
-                tipoPresentacion: 1,
-                fechaInicio: valorFecha1,
-                fechaFin: valorFecha2
-            }
-        }else{
-            var objeto = {
-                cliente: selectCliente.value,
-                tipoPresentacion: 1
-            }
-        }
+    if(objeto.valorFecha == 0){
+        delete objeto.valorFecha;
+    }
 
-    }else if(selectCliente.value.length == 0 && tipoPresentacion == 2){
+    if(objeto.FechaHoy == 0){
+        delete objeto.FechaHoy;
+    }
 
-        if(valorFecha1 != 0 && valorFecha2 != 0){
-            var objeto = {
-                tipoPresentacion: 2,
-                fechaInicio: valorFecha1,
-                fechaFin: valorFecha2
-            }
-        }else{
-            var objeto = {
-                tipoPresentacion: 2
-            }
-        }
+    if(objeto.FechaAyer == 0){
+        delete objeto.FechaAyer;
+    }
 
-    }else if(selectCliente.value.length > 0 && tipoPresentacion == 2){
-
-        if(valorFecha1 != 0 && valorFecha2 != 0){
-            var objeto = {
-                cliente: selectCliente.value,
-                tipoPresentacion: 2,
-                fechaInicio: valorFecha1,
-                fechaFin: valorFecha2
-            }
-        }else{
-            var objeto = {
-                cliente: selectCliente.value,
-                tipoPresentacion: 2
-            }
-        }
-
-    }else if(selectCliente.value.length == 0 && tipoPresentacion == 1){
-
-        if(valorFecha1 != 0 && valorFecha2 != 0){
-            var objeto = {
-                fechaInicio: valorFecha1,
-                fechaFin: valorFecha2
-            }
-        }else{
-            /*var objeto = {
-                tipoPresentacion:1
-            }*/
-            location.reload();
-        }
-
+    if(objeto.valorFecha == 1 || objeto.valorFecha == 2){
+        delete objeto.fechaInicioH;
+        delete objeto.fechaFin;
     }
 
     document.getElementById('rangoFechas').value = 0;
@@ -166,12 +118,11 @@ document.getElementById('filtrarPedidos').addEventListener('click', function(){
     document.getElementById('tipoPresentacion').value = 1;
 
     sendQueryFiltrosConsulta(objeto);
+
+/**/
 })
 
 function sendQueryFiltrosConsulta(objeto) {
-
-    //alert("llegó");
-    //http://192.168.9.139/julioCercafe/despostes/public
 
     var ajax = new XMLHttpRequest();
     ajax.open("GET","/filtrarTable?data="+ encodeURIComponent(JSON.stringify(objeto)),true);
@@ -187,25 +138,33 @@ function sendQueryFiltrosConsulta(objeto) {
             }else{
                 TableProducto(json);
             }
-
-            //console.log(json);
-
         }
     }
     ajax.send();
 }
 
 function NotFoundResults(){
-    var table = document.getElementById('BodyTablePedidos');
-    table.innerHTML = "";
 
-    var contenidoBody = `
+    var tableHistorial = document.getElementById('generarBorde');
+    tableHistorial.innerHTML = "";
+
+    tableContent = `
+    <thead class="thead-dark" id="CambiarColor">
         <tr>
-            <td colspan="6"><p style="font-weight: bold; font-size: 1.5rem;">No hay resultados.</p></td>
+            <th scope="col">Código</th>
+            <th scope="col">Fecha Entrega</th>
+            <th scope="col">Cliente</th>
+            <th scope="col">Estado</th>
         </tr>
-    `;
+    </thead>
+    <tbody id="BodyTablePedidos">
+        <td colspan="6"><p style="font-weight: bold; font-size: 1.5rem;">No hay resultados.</p></td>
+    </tbody>
+`;
 
-    table.innerHTML = contenidoBody;
+    tableHistorial.innerHTML += tableContent;
+
+/**/
 }
 
 function TableProducto(objeto) {

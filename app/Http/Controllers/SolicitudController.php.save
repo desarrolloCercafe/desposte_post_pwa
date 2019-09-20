@@ -46,21 +46,11 @@ class SolicitudController extends Controller
         $solicitud->fechaEntrega = request('fechaEntrega');
         $solicitud->fechaSolicitud = request('fechaSolicitud');
 
-	if($codCliente[0]->id == 69 || $codCliente[0]->id == 77 || $codCliente[0]->id == 150 || $codCliente[0]->id == 295){
-		$data = DB::select("SELECT valor FROM contador WHERE id = 1");
-		$consecutivo = "FE3-".$data[0]->valor;
-		$sumaConsecutivo = ($data[0]->valor + 1);
-		DB::update('UPDATE contador SET valor = ? WHERE id = 1',[$sumaConsecutivo]);
-	}else{
-		$data = DB::select("SELECT valor FROM contador WHERE id = 2");
-		$consecutivo = "FV2-".$data[0]->valor;
-		$sumaConsecutivo = ($data[0]->valor + 1);
-		DB::update('UPDATE contador SET valor = ? WHERE id = 2',[$sumaConsecutivo]);
-	}
+	if($codCliente[0]->id == )
 
         DB::insert(
-            'insert into pedido (consecutivo, codCliente, fechaSolicitud, fechaEntrega, idVendedor, estado) values (?, ?, ?, ?, ?, ?)',
-            [$consecutivo, $codCliente[0]->id, $solicitud->fechaSolicitud, $solicitud->fechaEntrega, $idVendedor[0]->id, 1]
+            'insert into pedido (codCliente, fechaSolicitud, fechaEntrega, idVendedor, estado) values (?, ?, ?, ?, ?)',
+            [$codCliente[0]->id, $solicitud->fechaSolicitud, $solicitud->fechaEntrega, $idVendedor[0]->id, 1]
         );
 
         $consecutivo = DB::select(

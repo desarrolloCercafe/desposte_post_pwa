@@ -15,6 +15,16 @@ Route::get('/', function () {
     return view('index');
 });
 
+Route::get('/caba', function(){
+	return view('pwa.index');
+});
+
+Route::get('/updatePedidos_offline', 'ConsultaController@update_offline')->name('updatePedidos_offline');
+
+Route::get('/data_offline','ConsultaController@data_offline')->name('data_offline');
+
+Route::get('/update_consecutivo','ConsultaController@update_consecutivo')->name('update_consecutivo');
+
 Route::get('/inicioSesion', 'inicioController@login')->name('inicioSesion');
 
 Route::get('/changePassword/{token}', 'inicioController@changePassword')->name('changePassword');
@@ -23,7 +33,7 @@ Route::get('/updatePassword', 'inicioController@updatePassword')->name('updatePa
 
 Route::get('/ReestablecerUsuario', 'inicioController@ReestablecerUsuario')->name('ReestablecerUsuario');
 
-Route::get('/solicitud', 'SolicitudController@index')->name('solicitud');
+Route::get('https://www.desposte.tk/solicitud', 'SolicitudController@index')->name('solicitud');
 
 Route::get('/consulta', 'EditPedidoController@index');
 
@@ -37,9 +47,15 @@ Route::get('/filtrarTable', 'ConsultaController@FiltrarTabla')->name('filtrarTab
 
 Route::get('/filtrarHistorial', 'HistorialController@FiltrarHistorial')->name('filtrarHistorial');
 
-Route::post('/GenerarCSV', 'ConsultaController@GenerarCSV')->name('GenerarCSV');
+Route::get('/filtrar_pedido_por_alistar_consecutivo', 'ConsultaController@filtrar_por_consecutivo')->name('filtrar_pedido_por_alistar_consecutivo');
 
-Route::post('/CSVGeneral', 'HistorialController@CSVGeneral')->name('CSVGeneral');
+Route::get('/filtrar_pedido_alistado_consecutivo', 'HistorialController@filtrar_por_consecutivo')->name('filtrar_pedido_alistado_consecutivo');
+
+Route::get('/GenerarCSV/{ConsecutivoPedido}', 'ConsultaController@GenerarCSV');
+
+Route::post('/CSVcreation', 'HistorialController@CSVcreation')->name('CSVcreation');
+
+Route::get('/CSVGeneral', 'HistorialController@CSVGeneral')->name('CSVGeneral');
 
 Route::get('/GenerarPDF/{ConsecutivoPedido}', 'ConsultaController@GenerarPDF');
 

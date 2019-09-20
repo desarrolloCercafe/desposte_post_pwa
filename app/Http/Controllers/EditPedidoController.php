@@ -31,7 +31,7 @@ class EditPedidoController extends Controller
         //$pedidoProductos = DB::select('select * from users where active = ?', [1])
 
         $productosPedidos = DB::select('SELECT prod.codigo, prod.nombre, sol.cantidadSolicitada,
-                                        sol.cantidadDespachada, sol.unidadMedida 
+                                        sol.cantidadDespachada, sol.unidadMedida, ped.estado 
                                         FROM producto as prod, solicitud as sol, pedido as ped 
                                         WHERE ped.id = sol.codPedido 
                                         AND sol.codProducto = prod.codigo AND ped.id = ?', 
@@ -41,11 +41,11 @@ class EditPedidoController extends Controller
     }
 
     public function UpdatePedido(Request $request){
-        
+
         $pedido = new Pedido();
-        
+
         $pedido->consecutivo = request('consecutivoPedido');
-        $pedido->fechaSolicitud = request('fechaSolicitud');
+        $pedido->fechaEntrega = request('fechaEntrega');
         $pedido->productos = json_decode(request('productosPedido'));
 
         $productos = $pedido->productos;
@@ -54,7 +54,7 @@ class EditPedidoController extends Controller
 
         DB::delete('DELETE FROM solicitud WHERE codPedido = ?', [$pedido->consecutivo]);
 
-        for ($i=0; $i < $cantidadCiclos; $i++) { 
+        for ($i=0; $i < $cantidadCiclos; $i++) {
             DB::insert(
                 'INSERT INTO solicitud (codPedido, codProducto, cantidadSolicitada,
                 cantidadDespachada, unidadMedida) VALUES (?, ?, ?, ?, ?)', 
@@ -63,6 +63,8 @@ class EditPedidoController extends Controller
                     $productos[$i]->unidad
                 ]);
         }
+
+	DB::update('UPDATE pedido SET fechaEntrega = ? WHERE id  = ?',[$pedido->fechaEntrega, $pedido->consecutivo]);
 
         return redirect('/consulta');
 

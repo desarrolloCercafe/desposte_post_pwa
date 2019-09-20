@@ -42,21 +42,32 @@ if(document.getElementById('addProductoEdit')){
         
             var array = [];
         
+		var estadoPedido = document.getElementById('estado_Pedido').value;
+
             for (let index = 0; index < tbodyEdit.rows.length; index++) {
                 
                 var ConsecutivoProducto = document.getElementById('codigo'+index);
                 var NombreProducto = document.getElementById('nombre'+index);
                 var CantidadSolicitada = document.getElementById('CantidadSolicitada'+index);
-                var CantidadDespachada = document.getElementById('CantidadDespachada'+index);
+		if(estadoPedido == 2){
+			var CantidadDespachada = document.getElementById('CantidadDespachada'+index);
+		}
+                //var CantidadDespachada = document.getElementById('CantidadDespachada'+index);
                 var unidadSeleccionada = document.getElementsByName('unidad'+index);
     
                 if(CantidadSolicitada.value < 0){
                     CantidadSolicitada.value = 0;
                 }
-    
-                if(CantidadDespachada.value < 0){
+
+		if(estadoPedido == 2){
+	                if(CantidadDespachada.value < 0){
+        	            CantidadDespachada.value = 0;
+	                }
+		}
+
+                /*if(CantidadDespachada.value < 0){
                     CantidadDespachada.value = 0;
-                }
+                }*/
     
                 var valueRadio;
     
@@ -68,34 +79,56 @@ if(document.getElementById('addProductoEdit')){
                     valueRadio = 0;
                 }
     
-                var objeto = {
+		if(estadoPedido == 2){
+	                var objeto = {
+                	    codigoProducto: ConsecutivoProducto.innerHTML,
+        	            NombreProducto: NombreProducto.innerHTML,
+	                    CantidadSolicitada: CantidadSolicitada.value,
+                	    CantidadDespachada: CantidadDespachada.value,
+        	            unidadSeleccionada: valueRadio
+	                };
+
+		}else{
+	                var objeto = {
+                	    codigoProducto: ConsecutivoProducto.innerHTML,
+        	            NombreProducto: NombreProducto.innerHTML,
+	                    CantidadSolicitada: CantidadSolicitada.value,
+                	    CantidadDespachada: 0,
+        	            unidadSeleccionada: valueRadio
+	                };
+
+		}
+                /*var objeto = {
                     codigoProducto: ConsecutivoProducto.innerHTML,
                     NombreProducto: NombreProducto.innerHTML,
                     CantidadSolicitada: CantidadSolicitada.value,
                     CantidadDespachada: CantidadDespachada.value,
                     unidadSeleccionada: valueRadio
-                };
-    
+                };*/
+
                 array.push(objeto);
-                
+
             }
-    
-            var textSelect = document.getElementById('selectProducto').options[selectProducto.selectedIndex].text;
-    
+
+            var textSelect = document.getElementById('selectProducto').value;
+            var value = textSelect.split(",");
+
+
             var productoSeleccionado = {
-                codigoProducto: selectProducto.value,
-                NombreProducto: textSelect,
+                codigoProducto: value[0],
+                NombreProducto: value[1],
                 CantidadSolicitada: 0,
                 CantidadDespachada: 0,
                 unidadSeleccionada: 0
             }
-    
+/**/
+
             array.push(productoSeleccionado);
-    
+
             localStorage.setItem("productos", JSON.stringify(array));
-            
+
             generarTablaEditarPedido(JSON.parse(localStorage.getItem("productos")));
-    
+
             document.getElementById('cerrarAgregarProductoEditar').click();
         }
     });
@@ -107,6 +140,8 @@ function generarTablaEditarPedido(objeto){
     var tbodyEdit = document.getElementById('tbodyEditProductos');
         tbodyEdit.innerHTML = "";
     
+    var tipoPedido = document.getElementById('estado_Pedido').value;
+
     var i = 0;
 
     objeto.forEach(function(producto){
@@ -119,11 +154,13 @@ function generarTablaEditarPedido(objeto){
                     <p id='nombre${i}'>${producto.NombreProducto}</p>
                 </td>
                 <td>
-                    <input type="number" name="CantidadSolicitada" ${producto.CantidadSolicitada == 0? "":`value="${producto.CantidadSolicitada}"`}" class="form-control" min="0" id="CantidadSolicitada${i}">
+                    <input type="number" name="CantidadSolicitada" ${producto.CantidadSolicitada == 0? "":`value="${producto.CantidadSolicitada}"`}" class="form-control" min="0" id="CantidadSolicitada${i}" step="0.01">
                 </td>
-                <td>
-                    <input type="number" name="CantidadDespachada" ${producto.CantidadDespachada == 0? "":`value="${producto.CantidadDespachada}"`}" class="form-control" min="0" id="CantidadDespachada${i}">
-                </td>
+		${tipoPedido == 2 ?
+                `<td>
+                    <input type="number" name="CantidadDespachada" ${producto.CantidadDespachada == 0? "":`value="${producto.CantidadDespachada}"`}" class="form-control" min="0" id="CantidadDespachada${i}" step="0.01"> 
+                </td>`:``
+		}
                 <td class="text-left">
                     ${producto.unidadSeleccionada == 0 ? 
                         `
@@ -199,7 +236,7 @@ function SaveProductsFirst(){
         
 
     }
-
+	var estado = document.getElementById('estado_Pedido').value;
     var contentTableEditar = document.getElementById('tbodyEditProductos');
 
     for (let index = 0; index < contentTableEditar.rows.length; index++) {
@@ -207,7 +244,10 @@ function SaveProductsFirst(){
         var consecutivoProducto = document.getElementById('codigo'+index);
         var NombrePedido = document.getElementById('nombre'+index);
         var cantidadSolicitada = document.getElementById('CantidadSolicitada'+index);
-        var cantidadDespachada = document.getElementById('CantidadDespachada'+index);
+	if(estado == 2){
+		var cantidadDespachada = document.getElementById('CantidadDespachada'+index);
+	}
+        //var cantidadDespachada = document.getElementById('CantidadDespachada'+index);
         var radio = document.getElementsByName("unidad"+index);
 
         var valueRadio;
@@ -218,13 +258,23 @@ function SaveProductsFirst(){
             valueRadio = radio[1].value;
         }
 
-        var productosEditado = {
-            codigoProducto: consecutivoProducto.innerHTML,
-            NombreProducto: NombrePedido.innerHTML,
-            CantidadSolicitada: cantidadSolicitada.value,
-            CantidadDespachada: cantidadDespachada.value,
-            unidadSeleccionada: valueRadio
-        }
+	if(estado == 2){
+	        var productosEditado = {
+        	    codigoProducto: consecutivoProducto.innerHTML,
+	            NombreProducto: NombrePedido.innerHTML,
+        	    CantidadSolicitada: cantidadSolicitada.value,
+	            CantidadDespachada: cantidadDespachada.value,
+        	    unidadSeleccionada: valueRadio
+	        }
+	}else{
+                var productosEditado = {
+                    codigoProducto: consecutivoProducto.innerHTML,
+                    NombreProducto: NombrePedido.innerHTML,
+                    CantidadSolicitada: cantidadSolicitada.value,
+                    CantidadDespachada: 0,
+                    unidadSeleccionada: valueRadio
+                }
+	}
 
         array.push(productosEditado);
     }

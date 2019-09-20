@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="stylesheet" href="../css/solicitud.css">
+    <link rel="stylesheet" href="../css/consulta.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+
+    <title>Desposte</title>
+  </head>
+  <body>
+      
+    <div class="container-fluid">
+	<button class="btn btn-danger btn-lg mt-2" id="btnRegresar">Regresar</button>
+        <div class="card mt-3">
+                        <div id="headRow">
+                    <article class="headerCard">
+                        <h3 id="head" class="card-header">Consultas Offline</h3>
+                    </article>
+                </div>
+                <div class="card-body">
+    
+                <div class="table-responsive-xl mb-2 ">
+                    <table class="table table-bordered table-hover text-center generarBorde" id="generarBorde">
+
+                        <thead class="thead-dark" id="CambiarColor">
+                            <tr>
+                                <th scope="col">Consecutivo</th>
+                                <th scope="col">Fecha Entrega</th>
+                                <th scope="col">Cliente</th>
+                                <th scope="col">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="BodyPedidosOffline">
+                        </tbody>
+                    </table>
+                    
+                    <div id="livesearch">
+                        
+                    </div>
+
+                    <div class="d-flex justify-content-end mr-2" id="PaginacionConsulta">
+                        
+                    </div>
+
+                        <button type="button" id="DesplegarErrorModal" class="btn btn-danger" data-target="#errorModal" data-toggle="modal">
+                                Error
+                        </button>
+                </div>
+
+    <!--Modal de descripción del pedido Por alistar-->
+
+    <div class="modal fade bd-modal-example-xl" id="exampleModal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="exampleModalLabel">Confirmar Pedido</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+            </div>
+            <div class="modal-body">
+                    <div class="table-responsive-xl">
+                        <table class="table table-bordered table-hover text-center generarBorde" id="generarBorde">
+                            <thead class="thead-dark" id="CambiarColor">
+                                <tr>
+                                    <th scope="col">Producto</th>
+                                    <th scope="col">Cantidad Solicitada</th>
+                                    <th scope="col">Unidad de medida</th>
+                                    <th scope="col">Cantidad Disponible</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaProductos_offline">
+
+                            </tbody>
+                        </table>
+			<input type="hidden" class="form-control" id="consecutivoPedido">
+                        <input type="hidden" class="form-control" id="cantidadFilas">
+                    </div>
+            </div>
+
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="ProductoAlistado">Alistado</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal para errores-->
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Alerta</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h2 id="textInfo"></h2>
+                </div>
+                <div id="form"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" id="cerrar">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal_regresar" id="DesplegarNotificacion" style="display:none;">
+  Activa Modal de Notificacion
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="modal_regresar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Notificación</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h2>Recuerda que debes tener conexión al momento de regresar, ¿Tienes conexión?</h2>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" id="cerrarNotificacion">No</button>
+        <button type="button" class="btn btn-success btn-lg" id="saveData_offline">Si</button>
+      </div>
+    </div>
+  </div>
+</div>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="../node_modules/popper.js/dist/umd/popper.min.js"></script>
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="../js/app_pwa.js"></script>
+    <script src="../js/jquery-3.3.1.js"></script>
+    <script src="../js/jquery.dataTables.min.js"></script>
+    <script src="../js/dataTables.bootstrap4.min.js"></script>
+
+  </body>
+</html>

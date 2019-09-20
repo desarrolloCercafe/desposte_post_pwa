@@ -1,7 +1,7 @@
 window.addEventListener('load', function(){
 
     if(!localStorage.getItem('nombre')){
-        window.location.href = "http://192.241.142.141/";
+        window.location.href = "https://www.desposte.tk/";
     }
     
     if(this.localStorage.getItem("despliegue")){

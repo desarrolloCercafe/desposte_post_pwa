@@ -22,7 +22,7 @@ document.getElementById('rangoFechasHistorial').addEventListener('change',functi
 function VerificarDespliegueHistorial(){
 
     if(!localStorage.getItem('nombre')){
-        window.location.href = "http://192.241.142.141/";
+        window.location.href = "https://www.desposte.tk/";
     }
     
     if(localStorage.getItem('despliegueModalHistorial')){
@@ -33,6 +33,7 @@ function VerificarDespliegueHistorial(){
 
 //Generamos el evento de escucha del boton
 document.getElementById('GlobalGenerarCSV').addEventListener('click', function () {
+//	alert('flkjgldkjg');
     if (verificarFiltros()) {
         var data = SaveData();
         SendQueryHistorialCSV(data);
@@ -80,10 +81,18 @@ function SaveData(){
     var valorFecha;
     var valorFecha1 = 0;
     var valorFecha2 = 0;
+    var FechaHoy = 0;
+
+    var FechaAyer = 0;
 
     selectFecha = document.getElementById('rangoFechasHistorial').value;
     selectCliente = document.getElementById('codClienteHistorial');
     tipoPresentacion = document.getElementById('tipoPresentacionHistorial').value;
+
+        if(selectFecha == 0 && selectCliente.value.length == 0 && tipoPresentacion == 1){
+                localStorage.setItem('despliegueModalHistorial', 1);
+                location.reload();
+        }
 
     var fecha = new Date();
                 dia = fecha.getDate();
@@ -92,80 +101,52 @@ function SaveData(){
 
     if(selectFecha != 0){
         if(selectFecha == 1){
-            valorFecha1 = year+"-"+mes+"-"+(dia-1);
-            valorFecha2 = year+"-"+mes+"-"+(dia+1);
+            valorFecha = 1;
+            FechaHoy = year+"-"+mes+"-"+dia;
         }else if(selectFecha == 2){
-            valorFecha1 = year+"-"+mes+"-"+(dia-1);
-            valorFecha2 = year+"-"+mes+"-"+dia;
+            valorFecha = 2;
+            FechaAyer = year+"-"+mes+"-"+dia;
         }else if(selectFecha == 3){
+            valorFecha = 3;
             valorFecha1 = document.getElementById('fechaInicio').value;
             valorFecha2 = document.getElementById('fechaFin').value;
         }
     }
 
-    if(selectCliente.value.length > 0){
+  if(selectCliente.value.length > 0){
         var data = document.querySelector('#dataClientesHistorial2 > option[value="'+selectCliente.value+'"]');
         selectCliente.value = data.innerHTML;
     }
 
-    if(selectCliente.value.length > 0 && tipoPresentacion == 1){
+    var objeto = {
+        codCliente: selectCliente.value,
+        tipoPresentacion: tipoPresentacion,
+        valorFecha: valorFecha,
+        FechaHoy: FechaHoy,
+        FechaAyer: FechaAyer,
+        fechaInicioH: valorFecha1,
+        fechaFin: valorFecha2
+    };
 
-        if(valorFecha1 != 0 && valorFecha2 != 0){
-            var objeto = {
-                codCliente: selectCliente.value,
-                tipoPresentacion: 1,
-                fechaInicioH: valorFecha1,
-                fechaFin: valorFecha2
-            }
-        }else{
-            var objeto = {
-                codCliente: selectCliente.value,
-                tipoPresentacion: 1
-            }
-        }
+    if(objeto.codCliente.length <= 0){
+        delete objeto.codCliente;
+    }
 
-    }else if(selectCliente.value.length == 0 && tipoPresentacion == 2){
+    if(objeto.valorFecha == 0){
+        delete objeto.valorFecha;
+    }
 
-        if(valorFecha1 != 0 && valorFecha2 != 0){
-            var objeto = {
-                tipoPresentacion: 2,
-                fechaInicioH: valorFecha1,
-                fechaFin: valorFecha2
-            }
-        }else{
-            var objeto = {
-                tipoPresentacion: 2
-            }
-        }
+    if(objeto.FechaHoy == 0){
+        delete objeto.FechaHoy;
+    }
 
-    }else if(selectCliente.value.length > 0 && tipoPresentacion == 2){
+    if(objeto.FechaAyer == 0){
+        delete objeto.FechaAyer;
+    }
 
-        if(valorFecha1 != 0 && valorFecha2 != 0){
-            var objeto = {
-                codCliente: selectCliente.value,
-                tipoPresentacion: 2,
-                fechaInicioH: valorFecha1,
-                fechaFin: valorFecha2
-            }
-        }else{
-            var objeto = {
-                codCliente: selectCliente.value,
-                tipoPresentacion: 2
-            }
-        }
-
-    }else if(selectCliente.value.length == 0 && tipoPresentacion == 1){
-
-        if(valorFecha1 != 0 && valorFecha2 != 0){
-            var objeto = {
-                fechaInicioH: valorFecha1,
-                fechaFin: valorFecha2
-            }
-        }else{
-            localStorage.setItem('despliegueModalHistorial', 1);
-            location.reload();
-        }
-
+    if(objeto.valorFecha == 1 || objeto.valorFecha == 2){
+        delete objeto.fechaInicioH;
+        delete objeto.fechaFin;
     }
 
     document.getElementById('rangoFechasHistorial').value = 0;
@@ -175,17 +156,24 @@ function SaveData(){
     return objeto;
 }
 
-//Mètodo para el filtrado de resultados
+//Mètodo para el filtrado de resultados del boton de Historial
 document.getElementById('filtrarPedidosHistorial').addEventListener('click', function(){
-    
+
     var selectFecha, selectCliente, tipoPresentacion;
     var valorFecha;
     var valorFecha1 = 0;
     var valorFecha2 = 0;
+    var FechaHoy = 0;
+    var FechaAyer = 0;
 
     selectFecha = document.getElementById('rangoFechasHistorial').value;
     selectCliente = document.getElementById('codClienteHistorial');
     tipoPresentacion = document.getElementById('tipoPresentacionHistorial').value;
+
+	if(selectFecha == 0 && selectCliente.value.length == 0 && tipoPresentacion == 1){
+		localStorage.setItem('despliegueModalHistorial', 1);
+	        location.reload();
+	}
 
     var fecha = new Date();
                 dia = fecha.getDate();
@@ -194,12 +182,13 @@ document.getElementById('filtrarPedidosHistorial').addEventListener('click', fun
 
     if(selectFecha != 0){
         if(selectFecha == 1){
-            valorFecha1 = year+"-"+mes+"-"+(dia-1);
-            valorFecha2 = year+"-"+mes+"-"+(dia+1);
+            valorFecha = 1;
+	    FechaHoy = year+"-"+mes+"-"+dia;
         }else if(selectFecha == 2){
-            valorFecha1 = year+"-"+mes+"-"+(dia-1);
-            valorFecha2 = year+"-"+mes+"-"+dia;
+            valorFecha = 2;
+            FechaAyer = year+"-"+mes+"-"+dia;
         }else if(selectFecha == 3){
+            valorFecha = 3;
             valorFecha1 = document.getElementById('fechaInicio').value;
             valorFecha2 = document.getElementById('fechaFin').value;
         }
@@ -210,64 +199,35 @@ document.getElementById('filtrarPedidosHistorial').addEventListener('click', fun
         selectCliente.value = data.innerHTML;
     }
 
-    if(selectCliente.value.length > 0 && tipoPresentacion == 1){
+    var objeto = {
+        codCliente: selectCliente.value,
+        tipoPresentacion: tipoPresentacion,
+        valorFecha: valorFecha,
+	FechaHoy: FechaHoy,
+	FechaAyer: FechaAyer,
+        fechaInicioH: valorFecha1,
+        fechaFin: valorFecha2
+    };
 
-        if(valorFecha1 != 0 && valorFecha2 != 0){
-            var objeto = {
-                codCliente: selectCliente.value,
-                tipoPresentacion: 1,
-                fechaInicioH: valorFecha1,
-                fechaFin: valorFecha2
-            }
-        }else{
-            var objeto = {
-                codCliente: selectCliente.value,
-                tipoPresentacion: 1
-            }
-        }
+    if(objeto.codCliente.length <= 0){
+        delete objeto.codCliente;
+    }
 
-    }else if(selectCliente.value.length == 0 && tipoPresentacion == 2){
+    if(objeto.valorFecha == 0){
+        delete objeto.valorFecha;
+    }
 
-        if(valorFecha1 != 0 && valorFecha2 != 0){
-            var objeto = {
-                tipoPresentacion: 2,
-                fechaInicioH: valorFecha1,
-                fechaFin: valorFecha2
-            }
-        }else{
-            var objeto = {
-                tipoPresentacion: 2
-            }
-        }
+    if(objeto.FechaHoy == 0){
+	delete objeto.FechaHoy;
+    }
 
-    }else if(selectCliente.value.length > 0 && tipoPresentacion == 2){
+    if(objeto.FechaAyer == 0){
+	delete objeto.FechaAyer;
+    }
 
-        if(valorFecha1 != 0 && valorFecha2 != 0){
-            var objeto = {
-                codCliente: selectCliente.value,
-                tipoPresentacion: 2,
-                fechaInicioH: valorFecha1,
-                fechaFin: valorFecha2
-            }
-        }else{
-            var objeto = {
-                codCliente: selectCliente.value,
-                tipoPresentacion: 2
-            }
-        }
-
-    }else if(selectCliente.value.length == 0 && tipoPresentacion == 1){
-
-        if(valorFecha1 != 0 && valorFecha2 != 0){
-            var objeto = {
-                fechaInicioH: valorFecha1,
-                fechaFin: valorFecha2
-            }
-        }else{
-            localStorage.setItem('despliegueModalHistorial', 1);
-            location.reload();
-        }
-
+    if(objeto.valorFecha == 1 || objeto.valorFecha == 2){
+        delete objeto.fechaInicioH;
+        delete objeto.fechaFin;
     }
 
     document.getElementById('rangoFechasHistorial').value = 0;
@@ -280,9 +240,9 @@ document.getElementById('filtrarPedidosHistorial').addEventListener('click', fun
 function sendQueryFiltrosHistorial(objeto) {
 
     //http://192.168.9.139/julioCercafe/despostes/public
-
+	console.log(objeto);
     var ajax = new XMLHttpRequest();
-    ajax.open("GET","/filtrarHistorial?data="+ encodeURIComponent(JSON.stringify(objeto)),true);
+    ajax.open("GET","https://www.desposte.tk/filtrarHistorial?data="+ encodeURIComponent(JSON.stringify(objeto)),true);
     ajax.setRequestHeader("Content-Type", "application/json");
     ajax.onreadystatechange=function() {
         if (this.readyState==4 && this.status==200) {
@@ -303,34 +263,54 @@ function sendQueryFiltrosHistorial(objeto) {
 //Función para lanzar los filtros obtenidos hacia laravel en forma oculta
 function SendQueryHistorialCSV(objeto) {
 
-    var form = document.getElementById('csvGeneral');
+	console.log(objeto);
 
-    if(objeto.hasOwnProperty('codCliente')){
-        var data = document.querySelector('#dataCliente2 > option[value="'+objeto.codCliente+'"]');
-        objeto.codCliente = data.innerHTML;
+    var ajax = new XMLHttpRequest();
+    ajax.open("GET","https://www.desposte.tk/CSVGeneral?data="+ encodeURIComponent(JSON.stringify(objeto)),true);
+    ajax.setRequestHeader("Content-Type", "application/json");
+    ajax.onreadystatechange=function() {
+        if (this.readyState==4 && this.status==200) {
+
+            var json = ajax.responseText;
+//		console.log(json);
+            if(json == "no hay resultados"){
+                var messageError = document.getElementById('textInfo'); 
+                messageError.innerHTML = "No hay resultados.";
+                document.getElementById('DesplegarErrorModal').click();
+            }else{
+	    var form = document.getElementById('CSVcreation');
+
+ 	   var contentForm = `
+       		 ${objeto.hasOwnProperty('fechaInicioH') ?
+	            `<input type="hidden" name="fechaInicioH" value="${objeto.fechaInicioH}">
+        	    <input type="hidden" name="fechaFin" value="${objeto.fechaFin}">` : ''
+	        }
+        	${objeto.hasOwnProperty('codCliente') ?
+	            `<input type="hidden" name="codCliente" value="${objeto.codCliente}">` : ""
+        	}
+	        ${objeto.hasOwnProperty('tipoPresentacion') ?
+	            `<input type="hidden" name="tipoPresentacion" value="${objeto.tipoPresentacion}">` : ""
+	        }
+		${objeto.hasOwnProperty('valorFecha')?
+		    `<input type="hidden" name="valorFecha" value="${objeto.valorFecha}">`:""
+		}
+		${objeto.hasOwnProperty('FechaHoy')?
+		    `<input type="hidden" name="FechaHoy" value="${objeto.FechaHoy}">`:""
+		}
+		${objeto.hasOwnProperty('FechaAyer')?
+		    `<input type="hidden" name="FechaAyer" value="$objeto.FechaAyer">`:""
+		}
+	    `;
+
+	    form.innerHTML += contentForm;
+
+	    form.submit();
+
+	    document.querySelectorAll("#csvGeneral > input").forEach(e => e.parentNode.removeChild(e));
+	    }
+        }
     }
-
-    var contentForm = `
-        ${objeto.hasOwnProperty('fechaInicioH') ?
-            `<input type="hidden" name="fechaInicioH" value="${objeto.fechaInicioH}">
-            <input type="hidden" name="fechaFin" value="${objeto.fechaFin}">` : ''
-        }
-
-        ${objeto.hasOwnProperty('codCliente') ?
-            `<input type="hidden" name="codCliente" value="${objeto.codCliente}">` : ""
-        }
-
-        ${objeto.hasOwnProperty('tipoPresentacion') ?
-            `<input type="hidden" name="tipoPresentacion" value="${objeto.tipoPresentacion}">` : ""
-        }
-    `;
-
-    form.innerHTML += contentForm;
-
-    form.submit();
-
-    document.querySelectorAll("#csvGeneral > input").forEach(e => e.parentNode.removeChild(e));
-
+    ajax.send();
 }
 
 //Función para lanzar los filtros obtenidos hacia laravel en forma oculta
@@ -338,24 +318,27 @@ function SendQueryHistorialPDF(objeto) {
 
     var form = document.getElementById('pdfGeneral');
 
-    if(objeto.hasOwnProperty('codCliente')){
-        var data = document.querySelector('#dataCliente2 > option[value="'+objeto.codCliente+'"]');
-        objeto.codCliente = data.innerHTML;
-    }
-
     var contentForm = `
-        ${objeto.hasOwnProperty('fechaInicioH') ?
-            `<input type="hidden" name="fechaInicioH" value="${objeto.fechaInicioH}">
-            <input type="hidden" name="fechaFin" value="${objeto.fechaFin}">` : ''
-        }
+         ${objeto.hasOwnProperty('fechaInicioH') ?
+             `<input type="hidden" name="fechaInicioH" value="${objeto.fechaInicioH}">
+              <input type="hidden" name="fechaFin" value="${objeto.fechaFin}">` : ''
+         }
+         ${objeto.hasOwnProperty('codCliente') ?
+             `<input type="hidden" name="codCliente" value="${objeto.codCliente}">` : ""
+         }
+         ${objeto.hasOwnProperty('tipoPresentacion') ?
+             `<input type="hidden" name="tipoPresentacion" value="${objeto.tipoPresentacion}">` : ""
+         }
+         ${objeto.hasOwnProperty('valorFecha')?
+             `<input type="hidden" name="valorFecha" value="${objeto.valorFecha}">`:""
+         }
+         ${objeto.hasOwnProperty('FechaHoy')?
+             `<input type="hidden" name="FechaHoy" value="${objeto.FechaHoy}">`:""
+         }
+         ${objeto.hasOwnProperty('FechaAyer')?
+             `<input type="hidden" name="FechaAyer" value="$objeto.FechaAyer">`:""
+         }
 
-        ${objeto.hasOwnProperty('codCliente') ?
-            `<input type="hidden" name="codCliente" value="${objeto.codCliente}">` : ""
-        }
-
-        ${objeto.hasOwnProperty('tipoPresentacion') ?
-            `<input type="hidden" name="tipoPresentacion" value="${objeto.tipoPresentacion}">` : ""
-        }
     `;
 
     form.innerHTML += contentForm;
@@ -367,15 +350,27 @@ function SendQueryHistorialPDF(objeto) {
 }
 
 function NotFoundResultsHistorial(){
-    var table = document.getElementById('tBodyHistorial');
-    table.innerHTML = "";
+    var tableHistorial = document.getElementById('HistorialTable');
+    tableHistorial.innerHTML = "";
 
-    var contenidoBody = `
+    tableContent = `
+    <thead class="thead-dark" id="CambiarColor">
         <tr>
-            <td colspan="8"><p style="font-weight: bold; font-size: 1.5rem;">No hay resultados.</p></td>
+            <th scope="col">Código</th>
+            <th scope="col">Fecha Solicitud</th>
+            <th scope="col">Fecha Entrega</th>
+            <th scope="col">Cliente</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Acciones</th>
         </tr>
-    `;
-    table.innerHTML = contenidoBody;
+    </thead>
+    <tbody id="tBodyHistorial">
+	<td colspan="8"><p style="font-weight: bold; font-size: 1.5rem;">No hay resultados.</p></td>
+    </tbody>
+`;
+
+    tableHistorial.innerHTML += tableContent;
+/**/
 }
 
 function TablePedidoHistorial(objeto) {
@@ -407,7 +402,7 @@ function TablePedidoHistorial(objeto) {
         <th scope="row">
             <button type="button" id="botonHistorial2<?php echo $i; ?>" data-toggle="modal"
             data-target="#descipcionHistorial" value="${item.id}" onclick="ShowInfoHistorial(this)">
-                PD${item.id}
+                <p style="color:red; font-weight:bold">PD${item.id}</p>
             </button>
         </th>
         <td id="fecha${i}">${item.fechaSolicitud}
@@ -432,14 +427,9 @@ function TablePedidoHistorial(objeto) {
                   Acciones
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="/editPedido/${item.id}">Editar pedido</a>
-
-                    <form action="{{route('GenerarCSV')}}" method="post">
-                        <input type="hidden" name="consecutivo" value="${item.id}">
-                        <input type="submit" class="dropdown-item" value="Generar CSV">
-                    </form>
-
-                    <a class="dropdown-item" href="/GenerarPDF/${item.id}">Generar PDF</a>
+                    <a class="dropdown-item" href="https://www.desposte.tk/editPedido/${item.id}">Editar pedido</a>
+		    <a class="dropdown-item" href="https://www.desposte.tk/GenerarCSV/${item.id}">Generar CSV</a>
+                    <a class="dropdown-item" href="https://www.desposte.tk/GenerarPDF/${item.id}">Generar PDF</a>
                 </div>
             </div>
         </td>
@@ -485,7 +475,7 @@ function TableProductoHistorial(objeto) {
 
         tableContentHistorial = `
         <tr>
-            <th scope="row">${item.id}</th>
+            <th scope="row">${item.codigo}</th>
             <td>${item.NombreProd}</td>
             <td>${item.cantidadSolicitada}</td>
             <td>${item.cantidadDespachada}</td>
@@ -498,14 +488,14 @@ function TableProductoHistorial(objeto) {
                       Acciones
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="/editPedido/${item.id}">Editar pedido</a>
+                        <a class="dropdown-item" href="https://www.desposte.tk/editPedido/${item.id}">Editar pedido</a>
 
                         <form action="{{route('GenerarCSV')}}" method="post">
                             <input type="hidden" name="consecutivo" value="${item.id}">
                             <input type="submit" class="dropdown-item" value="Generar CSV">
                         </form>
 
-                        <a class="dropdown-item" href="/GenerarPDF/${item.id}">Generar PDF</a>
+                        <a class="dropdown-item" href="https://www.desposte.tk/GenerarPDF/${item.id}">Generar PDF</a>
 
                     </div>
                 </div>

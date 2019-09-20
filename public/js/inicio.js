@@ -3,7 +3,7 @@ window.onload = inicio();
     function inicio(){
 
       if(localStorage.getItem('nombre')){
-        window.location.href = "http://192.241.142.141/solicitud";
+        window.location.href = "https://www.desposte.tk/solicitud";
       }
 
       if(localStorage.getItem('usuario') || localStorage.getItem('password')){
@@ -23,7 +23,6 @@ window.onload = inicio();
           if(document.getElementById('checkBoxRemember').checked == true){
             localStorage.setItem("recordar",1);
           }
-          //localStorage.setItem("recordar",1);
 
           if(sessionStorage.getItem("CambioIniciado")){
             sessionStorage.removeItem("CambioIniciado");
@@ -35,7 +34,7 @@ window.onload = inicio();
             };
 
             QueryIniciarSistema(objeto);
-            //document.getElementById('form_inicio').submit();
+
         }else{
             e.preventDefault();
             document.getElementById('botoErrorInicioSesion').click();
@@ -134,7 +133,7 @@ window.onload = inicio();
     function QueryRestablecerUsuario(objeto){
       
       var ajax = new XMLHttpRequest();
-      ajax.open("GET","/ReestablecerUsuario?data="+ encodeURIComponent(JSON.stringify(objeto)),true);
+      ajax.open("GET","https://www.desposte.tk/ReestablecerUsuario?data="+ encodeURIComponent(JSON.stringify(objeto)),true);
       ajax.setRequestHeader("Content-Type", "application/json");
       ajax.onreadystatechange=function() {
           if (this.readyState==4 && this.status==200) {
@@ -153,7 +152,7 @@ window.onload = inicio();
 
     function QueryIniciarSistema(objeto){
       var ajax = new XMLHttpRequest();
-      ajax.open("GET","/inicioSesion?data="+ encodeURIComponent(JSON.stringify(objeto)),true);
+      ajax.open("GET","https://www.desposte.tk/inicioSesion?data="+ encodeURIComponent(JSON.stringify(objeto)),true);
       ajax.setRequestHeader("Content-Type", "application/json");
       ajax.onreadystatechange=function() {
           if (this.readyState==4 && this.status==200) {
@@ -167,21 +166,9 @@ window.onload = inicio();
                 localStorage.setItem('password', objeto.password);
               }
               localStorage.setItem('nombre', response);
-              window.location.href = "http://192.241.142.141/solicitud";
+              window.location.href = "https://www.desposte.tk/solicitud";
             }
-            //console.log(response);
-            /*var respuesta = ajax.responseText;
-            if(respuesta == "OK"){
-              if(localStorage.getItem('recordar')){
-                localStorage.setItem('usuario', objeto.usuario);
-                localStorage.setItem('password', objeto.password);
-              }
-              //localStorage.setItem('nombre', ".$data[0]->nombre.");
-            }else{
-              //SendEmailRecovery(2);
-              document.getElementById('contentErrorModalInicio').innerHTML = "Usuario o contraseña incorrectos";
-              document.getElementById('botoErrorInicioSesion').click();
-            }*/
+            /**/
           }
       }
       ajax.send();

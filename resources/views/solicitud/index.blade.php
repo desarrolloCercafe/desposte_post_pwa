@@ -116,6 +116,32 @@
     </div>
 </div>
 
+<!--Modal de creacion de pedidos-->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal_pedido_enviado" style="display:none;" id="desplegar_modal_registro_pedido">
+  Pedido Enviado
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="modal_pedido_enviado" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Registro de Pedido</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h3 class="font-weight-bold">Pedido Generado con éxito</h3>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Ok</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <!--Modal de notificaciones sobre errores en las validaciones-->
 <div class="modal fade" id="ValidationModal" tabindex="-1" role="dialog" aria-labelledby="ModalDeleteLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">

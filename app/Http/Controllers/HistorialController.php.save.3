@@ -206,30 +206,6 @@ class HistorialController extends Controller
         return json_encode($datosFiltrados);
     }
 
-    public function filtrar_por_consecutivo(Request $request){
-	header("Content-type: application/json");
-	$filtros = json_decode(stripslashes(file_get_contents("php://input")));
-	$filtros = json_decode(stripslashes($request->consecutivo));
-
-	$response = "";
-
-       	$response = DB::select(
-      		'SELECT ped.id, ped.fechaSolicitud, ped.fechaEntrega, cl.razonSocial, ped.estado, ped.idVendedor
-	            FROM pedido as ped, cliente as cl WHERE ped.estado = 2 AND ped.codCliente = cl.id
-       		    AND ped.id = ?',
-	           [$filtros]
-       	);
-
-	if(Count($response)){
-		return json_encode($response);
-	}else{
-		$response = "no hay resultados";
-		return json_encode($response);
-	}
-//	return json_encode($response);
-
-    }
-
     public function CSVGeneral(Request $request){
 
         header("Content-Type: application/json");
@@ -494,7 +470,6 @@ public function CSVcreation(Request $request){
                     'SELECT ped.fechaSolicitud,
                             tipoCl.patronContable,
                             ped.id,
-			    ped.consecutivo,
                             cl.nit,
                             cl.razonSocial,
                             tipoCl.formaPago,
@@ -512,7 +487,7 @@ public function CSVcreation(Request $request){
                             INNER JOIN listaproducto as lprod ON prod.codigo = lprod.idProducto
                     WHERE cl.id = ? AND
                             ped.fechaEntrega = ? AND
-                            ped.estado = 2 ORDER BY cl.nit ORDER BY ped.consecutivo ASC',
+                            ped.estado = 2 ORDER BY cl.nit',
                     [$codCliente, $hoy]
                     );
 
@@ -521,7 +496,6 @@ public function CSVcreation(Request $request){
                     'SELECT ped.fechaSolicitud,
                             tipoCl.patronContable,
                             ped.id,
-			    ped.consecutivo,
                             cl.nit,
                             cl.razonSocial,
                             tipoCl.formaPago,
@@ -539,7 +513,7 @@ public function CSVcreation(Request $request){
                             INNER JOIN listaproducto as lprod ON prod.codigo = lprod.idProducto
                     WHERE cl.id = ? AND
                             ped.fechaEntrega = ? AND
-                            ped.estado = 2 ORDER BY ped.consecutivo ASC',
+                            ped.estado = 2 ORDER BY cl.nit',
                     [$codCliente, $ayer]
                     );
 		}else{
@@ -547,7 +521,6 @@ public function CSVcreation(Request $request){
                     'SELECT ped.fechaSolicitud,
                             tipoCl.patronContable,
                             ped.id,
-			    ped.consecutivo,
                             cl.nit,
                             cl.razonSocial,
                             tipoCl.formaPago,
@@ -565,7 +538,7 @@ public function CSVcreation(Request $request){
                             INNER JOIN listaproducto as lprod ON prod.codigo = lprod.idProducto
                     WHERE cl.id = ? AND
                             ped.fechaEntrega BETWEEN ? AND ? AND
-                            ped.estado = 2 ORDER BY ped.consecutivo ASC',
+                            ped.estado = 2 ORDER BY cl.nit',
                     [$codCliente, $fechaInicioH, $fechaFin]
                     );
 
@@ -579,7 +552,6 @@ public function CSVcreation(Request $request){
                     'SELECT ped.fechaSolicitud,
                             tipoCl.patronContable,
                             ped.id,
-			    ped.consecutivo,
                             cl.nit,
                             cl.razonSocial,
                             tipoCl.formaPago,
@@ -596,7 +568,7 @@ public function CSVcreation(Request $request){
                             INNER JOIN producto as prod ON prod.codigo = sol.codProducto
                             INNER JOIN listaproducto as lprod ON prod.codigo = lprod.idProducto
                     WHERE ped.fechaEntrega = ? AND
-                            ped.estado = 2 ORDER BY ped.consecutivo ASC',
+                            ped.estado = 2 ORDER BY cl.nit',
                     [$hoy]
                     );
 		}elseif(request('valorFecha') == 2){
@@ -604,7 +576,6 @@ public function CSVcreation(Request $request){
                     'SELECT ped.fechaSolicitud,
                             tipoCl.patronContable,
                             ped.id,
-			    ped.consecutivo,
                             cl.nit,
                             cl.razonSocial,
                             tipoCl.formaPago,
@@ -621,7 +592,7 @@ public function CSVcreation(Request $request){
                             INNER JOIN producto as prod ON prod.codigo = sol.codProducto
                             INNER JOIN listaproducto as lprod ON prod.codigo = lprod.idProducto
                     WHERE ped.fechaEntrega = ? AND
-                            ped.estado = 2 ORDER BY ped.consecutivo ASC',
+                            ped.estado = 2 ORDER BY cl.nit',
                     [$ayer]
                     );
 		}else{
@@ -629,7 +600,6 @@ public function CSVcreation(Request $request){
                     'SELECT ped.fechaSolicitud,
                             tipoCl.patronContable,
                             ped.id,
-			    ped.consecutivo,
                             cl.nit,
                             cl.razonSocial,
                             tipoCl.formaPago,
@@ -646,7 +616,7 @@ public function CSVcreation(Request $request){
                             INNER JOIN producto as prod ON prod.codigo = sol.codProducto
                             INNER JOIN listaproducto as lprod ON prod.codigo = lprod.idProducto
                     WHERE ped.fechaEntrega BETWEEN ? AND ? AND
-                            ped.estado = 2 ORDER BY ped.consecutivo ASC',
+                            ped.estado = 2 ORDER BY cl.nit',
                     [$fechaInicioH, $fechaFin]
                     );
 
@@ -659,7 +629,6 @@ public function CSVcreation(Request $request){
                     'SELECT ped.fechaSolicitud, 
                             tipoCl.patronContable,
                             ped.id,
-			    ped.consecutivo,
                             cl.nit,
                             cl.razonSocial,
                             tipoCl.formaPago,
@@ -676,61 +645,173 @@ public function CSVcreation(Request $request){
                             INNER JOIN producto as prod ON prod.codigo = sol.codProducto 
                             INNER JOIN listaproducto as lprod ON prod.codigo = lprod.idProducto 
                     WHERE cl.id = ? AND
-                            ped.estado = 2 ORDER BY ped.consecutivo ASC', 
+                            ped.estado = 2 ORDER BY cl.nit', 
                     [$codCliente]
                 );
         }
+
+	$prueba = 0;
+	$sumaConsecutivo = 0;
         $salida = fopen('php://output', 'w');
+
         $separador = ",";
 
         header('Content-Type:text/csv; charset=UTF-8');
         header('Content-Disposition: attachment; filename="Reporte_Fechas_Ingreso.csv"');
 
+	fputcsv($salida, array('c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7','c8','c9','c10','c11','c12','c13','c14','c15','c16','c17'));
+
         foreach ($datosFiltrados as $key) {
 
-            $newFechaSolicitud = date("d/m/Y");
-	    $consecutivo = substr($key->consecutivo, 4);
+		$data = DB::select('SELECT valor FROM contador WHERE id = 1');
+		$consecutivo = $data[0]->valor;
 
+		/*if($prueba != $key->nit && $prueba != 0){
+			$sumaConsecutivo = ($consecutivo + 1);
+			DB::update('UPDATE contador SET valor = ? WHERE id = 1', [$sumaConsecutivo]);
+		}*/
+
+
+            $newFechaSolicitud = date_format(new DateTime($key->fechaSolicitud),'d/m/Y');
             if($key->patronContable == "FV2"){
-               if($key->valorTipoCliente == 1){
-		    $valores = array($newFechaSolicitud, $key->patronContable, "PV2", $consecutivo, $newFechaSolicitud, $key->nit, $key->razonSocial, "38", "Producto subido por archivo plano", $key->formaPago, "30", $key->codigo, $key->cantidadDespachada, $key->valorMayorista, "0", "07", $key->patronContable);
-                    fputs($salida, implode($valores, ','));
+                if($key->valorTipoCliente == 1){
+                    fputcsv($salida, array($newFechaSolicitud,
+                                            $key->patronContable,
+                                            "PV2",
+                                            $key->id,
+                                            $newFechaSolicitud,
+                                            $key->nit,
+                                            $key->razonSocial,
+                                            "38",
+                                            "Producto subido por archivo plano",
+                                            $key->formaPago,
+                                            "30",
+                                            $key->codigo,
+                                            $key->cantidadDespachada,
+                                            $key->valorMayorista,
+                                            "0",
+                                            "07",
+                                            $key->patronContable),
+                                            $separador);
                 }else{
-		    $valores = array($newFechaSolicitud, $key->patronContable, "PV2", $consecutivo, $newFechaSolicitud, $key->nit, $key->razonSocial, "38", "Producto subido por archivo plano", $key->formaPago, "30", $key->codigo, $key->cantidadDespachada, $key->valorValencia, "0", "07", $key->patronContable);
-                    fputs($salida, implode($valores, ','));
+                    fputcsv($salida, array($newFechaSolicitud,
+                                            $key->patronContable,
+                                            "PV2",
+                                            $key->id,
+                                            $newFechaSolicitud,
+                                            $key->nit,
+                                            $key->razonSocial,
+                                            "38",
+                                            "Producto subido por archivo plano",
+                                            $key->formaPago,
+                                            "30",
+                                            $key->codigo,
+                                            $key->cantidadDespachada,
+                                            $key->valorValencia,
+                                            "0",
+                                            "07",
+                                            $key->patronContable),
+                                            $separador);
                 }
             }else{
-	           if($key->valorTipoCliente == 1){
+
+/**/
+
+	            if($key->valorTipoCliente == 1){
                     switch ($key->formaPago) {
                         case '03':
                             $nuevaFecha = strtotime('+1 day', strtotime($key->fechaSolicitud));
                             $nuevaFecha = date('j/m/Y', $nuevaFecha);
-                            $valores = array($newFechaSolicitud, $key->patronContable, "EMAN", $consecutivo, $nuevaFecha, $key->nit, $key->razonSocial, "38", "Producto subido por archivo plano", $key->formaPago, "30", $key->codigo, $key->cantidadDespachada, $key->valorMayorista, "0", "07", $key->patronContable);
-                            fputs($salida, implode($valores, ','));
+                            fputcsv($salida, array($newFechaSolicitud,
+                                                    $key->patronContable,
+                                                    "EMAN",
+                                                    $consecutivo,
+                                                    $nuevaFecha,
+                                                    $key->nit,
+                                                    $key->razonSocial,
+                                                    "38",
+                                                    "Producto subido por archivo plano",
+                                                    "0".$key->formaPago,
+                                                    "30",
+                                                    $key->codigo,
+                                                    $key->cantidadDespachada,
+                                                    $key->valorMayorista,
+                                                    "0",
+                                                    "07",
+                                                    $key->patronContable),
+                                                    $separador);
                             break;
                         case '04':
                             $nuevaFecha = strtotime('+8 day', strtotime($key->fechaSolicitud));
                             $nuevaFecha = date('j/m/Y', $nuevaFecha);
-			    $valores = array($newFechaSolicitud, $key->patronContable, "EMAN", $consecutivo, $nuevaFecha, $key->nit, $key->razonSocial, "38", "Producto subido por archivo plano", $key->formaPago, "30", $key->codigo, $key->cantidadDespachada, $key->valorMayorista, "0", "07", $key->patronContable);
-                            fputs($salida, implode($valores, ','));
+                            fputcsv($salida, array($newFechaSolicitud,
+                                                    $key->patronContable,
+                                                    "EMAN",
+                                                    $consecutivo,
+                                                    $nuevaFecha,
+                                                    $key->nit,
+                                                    $key->razonSocial,
+                                                    "38",
+                                                    "Producto subido por archivo plano",
+                                                    "0".$key->formaPago,
+                                                    "30",
+                                                    $key->codigo,
+                                                    $key->cantidadDespachada,
+                                                    $key->valorMayorista,
+                                                    "0",
+                                                    "07",
+                                                    $key->patronContable),
+                                                    $separador);
                             break;
                         case '05':
                             $nuevaFecha = strtotime('+15 day', strtotime($key->fechaSolicitud));
                             $nuevaFecha = date('j/m/Y', $nuevaFecha);
-			    $valores = array($newFechaSolicitud, $key->patronContable, "EMAN", $consecutivo, $nuevaFecha, $key->nit, $key->razonSocial, "38", "Producto subido por archivo plano", $key->formaPago, "30", $key->codigo,$key->cantidadDespachada, $key->valorMayorista, "0", "07", $key->patronContable);
-                            fputs($salida, implode($valores, ','));
+                            fputcsv($salida, array($newFechaSolicitud,
+                                                    $key->patronContable,
+                                                    "EMAN",
+                                                    $consecutivo,
+                                                    $nuevaFecha,
+                                                    $key->nit,
+                                                    $key->razonSocial,
+                                                    "38",
+                                                    "Producto subido por archivo plano",
+                                                    "0".$key->formaPago,
+                                                    "30",
+                                                    $key->codigo,
+                                                    $key->cantidadDespachada,
+                                                    $key->valorMayorista,
+                                                    "0",
+                                                    "07",
+                                                    $key->patronContable),
+                                                    $separador);
                             break;
                     }
                 }else{
                     $nuevaFecha = strtotime('+8 day', strtotime($key->fechaSolicitud));
                     $nuevaFecha = date('j/m/Y', $nuevaFecha);
-	      	    $valores = array($newFechaSolicitud, $key->patronContable, "EMAN", $consecutivo, $nuevaFecha, $key->nit, $key->razonSocial, "38", "Producto subido por archivo plano", $key->formaPago, "30", $key->codigo, $key->cantidadDespachada, $key->valorCebarte, "0", "07", $key->patronContable);
-                    fputs($salida, implode($valores, ','));
+                    fputcsv($salida, array($newFechaSolicitud,
+                                            $key->patronContable,
+                                            "EMAN",
+                                            $consecutivo,
+                                            $nuevaFecha,
+                                            $key->nit,
+                                            $key->razonSocial,
+                                            "38",
+                                            "Producto subido por archivo plano",
+                                            "0".$key->formaPago,
+                                            "30",
+                                            $key->codigo,
+                                            $key->cantidadDespachada,
+                                            $key->valorCebarte,
+                                            "0",
+                                            "07",
+                                            $key->patronContable),
+                                            $separador);
                 }
+
+//		$prueba = $key->nit;
             }
-		fwrite($salida, $separador);
-		$eol = "\r\n";
-		fwrite($salida, $eol);
+		$prueba = $key->nit;
         }
 
     }
